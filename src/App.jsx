@@ -1,4 +1,4 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { Search, ArrowLeft, Star, Heart, Loader2 } from "lucide-react"; // Added Loader2 for loading spinner
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -27,7 +27,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, handleSearch }) => {
   );
 };
 
-// MOVIE CARD COMPONENT
+//  MOVIE CARD COMPONENT
 
 const MovieCard = ({ movie, onClick, isFavorite, onToggleFavorite }) => {
   return (
@@ -57,7 +57,7 @@ const MovieCard = ({ movie, onClick, isFavorite, onToggleFavorite }) => {
             : "https://via.placeholder.com/400x600?text=No+Poster"
         }
         alt={movie.Title}
-        className="w-full h-[400px] object-cover"
+        className="w-full h-100 object-cover"
       />
       <div className="p-5 flex-1 flex flex-col justify-between">
         <h2 className="text-xl font-bold mb-1 line-clamp-1" title={movie.Title}>
@@ -79,7 +79,8 @@ const MovieDetails = ({ movie, onBack }) => {
     const fetchFullDetails = async () => {
       setIsLoading(true);
 
-      const API_KEY = "6374127f";
+      // Pulls the API key securely from your .env file or Vercel environment variables
+      const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 
       try {
         const response = await fetch(
@@ -187,7 +188,6 @@ function App() {
   const [currentView, setCurrentView] = useState("home");
   const [selectedMovie, setSelectedMovie] = useState(null);
 
-  //  States for loading and errors on the home page
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -204,7 +204,8 @@ function App() {
     setIsLoading(true);
     setError(null);
 
-    const API_KEY = "6374127f";
+    // Pulls the API key securely from your .env file or Vercel environment variables
+    const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 
     try {
       const response = await fetch(
@@ -213,10 +214,10 @@ function App() {
       const data = await response.json();
 
       if (data.Response === "True") {
-        setMovies(...movies, data.Search);
+        setMovies(data.Search);
       } else {
         setMovies([]);
-        setError(data.Error); // Sets error to "Movie not found!" from OMDB
+        setError(data.Error);
       }
     } catch (err) {
       setError("Failed to fetch movies. Please check your connection.");
